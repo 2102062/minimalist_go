@@ -1,91 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mimialist_go/game_bloc.dart';
 
-class GoBoard extends StatelessWidget {
-  final Game game;
-
-  const GoBoard({Key key, @required this.game}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return _buildGameBody();
-  }
-
-  Widget _buildGameBody() {
-    int count = game.gridState.length;
-    return AspectRatio(
-      aspectRatio: 1.0,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            right: BorderSide(width: 1),
-            top: BorderSide(width: 1),
-          ),
-        ),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: count,
-          ),
-          itemBuilder: _buildGridItems,
-          itemCount: count * count,
-          shrinkWrap: true,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGridItems(BuildContext context, int index) {
-    int gridStateLength = game.gridState.length;
-    int x, y = 0;
-    x = (index / gridStateLength).floor();
-    y = (index % gridStateLength);
-    return GestureDetector(
-      onTap: () => _gridItemTapped(x, y),
-      child: GridTile(
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 0.5)),
-          child: Center(
-            child: _buildGridItem(x, y),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGridItem(int x, int y) {
-    switch (game.gridState[x][y]) {
-      case '':
-        return Text('');
-        break;
-      case 'W':
-        return Container(
-          color: Colors.blue,
-        );
-        break;
-      case 'B':
-        return Container(
-          color: Colors.yellow,
-        );
-        break;
-      default:
-        return Text(game.gridState[x][y].toString());
-    }
-  }
-
-  void _gridItemTapped(int x, int y) {
-    game.updateTile(x, y);
-  }
-}
 
 class Game {
+  final GameBoardBloc bloc;
   bool whiteTurn = true;
   List<List<String>> gridState = [[]];
 
-  Game({@required size}) {
-    createGrid(size);
-  }
+  Game({@required this.bloc});
 
   void createGrid(int size) {
     List<List<String>> list = [];
@@ -101,7 +25,19 @@ class Game {
   }
 
   void updateTile(int x, int y) {
-    gridState[x][y] = whiteTurn ? "W" : "B";
-    whiteTurn = !whiteTurn;
+    if(!checkIfSuicidal(x, y, whiteTurn)) {
+      gridState[x][y] = whiteTurn ? "W" : "B";
+      whiteTurn = !whiteTurn;
+      bloc.add(TileTappedEvent(x, y));
+    }
+  }
+
+  bool checkIfSuicidal(int x, int y, bool white) {
+    String opponent = white ? "B" : "W";
+    if(gridState[x + 1][y + 1] != opponent) return false;
+    if(gridState[x - 1][y + 1] != opponent) return false;
+    if(gridState[x + 1][y - 1] != opponent) return false;
+    if(gridState[x - 1][y - 1] != opponent) return false;
+    return true;
   }
 }

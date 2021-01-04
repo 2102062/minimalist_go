@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mimialist_go/game.dart';
 
+import 'dependency_injection.dart';
+import 'features/presentation/goboard.dart';
+import 'game_bloc.dart';
+
 void main() {
+  init();
   runApp(MyApp());
 }
 
@@ -26,7 +31,9 @@ class MyHomePage extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: GoBoard(game: Game(size: 9),),
+          child: GoBoard(
+            game: sl()
+          ),
         ),
       ),
     );
