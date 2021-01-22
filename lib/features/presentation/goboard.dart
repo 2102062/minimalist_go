@@ -17,7 +17,8 @@ class GoBoard extends StatelessWidget {
       create: (_) => bloc,
       child: BlocBuilder<GameBoardBloc, GameBoardState>(
         builder: (context, state) {
-          debugPrint("GoBoard.build: New state received of type <${state.runtimeType}>");
+          debugPrint(
+              "GoBoard.build: New state received of type <${state.runtimeType}> [Address ${state.hashCode}]");
           if (state is LoadedState) {
             int count = state.board.grid.length;
             debugPrint(
@@ -27,40 +28,19 @@ class GoBoard extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border(
-                    right: BorderSide(width: 1),
-                    top: BorderSide(width: 1),
+                    top: BorderSide(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                    right: BorderSide(color: Colors.grey, width: 1),
                   ),
                 ),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: count,
-                  ),
-                  itemBuilder: (context, index) {
-                    int gridStateLength = state.board.grid.length;
-                    int x, y = 0;
-                    x = (index / gridStateLength).floor();
-                    y = (index % gridStateLength);
-                    return GestureDetector(
-                      onTap: () => _gridItemTapped(x, y),
-                      child: GridTile(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.black, width: 0.5)),
-                          child: Center(
-                            child: _buildGridItem(x, y, state.board),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: count * count,
-                  shrinkWrap: true,
-                ),
+                child: Table(children: _buildChildren(count, state, context)),
               ),
             );
           } else {
-            debugPrint("GoBoard.build: Dispatching initial LoadBoardEvent");
+            debugPrint(
+                "GoBoard.build: Bloc IdleState. Dispatching initial LoadBoardEvent");
             bloc.add(LoadBoardEvent());
             return Center(
               child: CircularProgressIndicator(),
@@ -71,9 +51,49 @@ class GoBoard extends StatelessWidget {
     );
   }
 
+  List<TableRow> _buildChildren(
+      int count, LoadedState state, BuildContext context) {
+    List<TableRow> list = [];
+    for (int i = 0; i < count; i++) {
+      int gridStateLength = state.board.grid.length;
+      int x, y = 0;
+      x = (i / gridStateLength).floor();
+      y = (i % gridStateLength);
+      List<Widget> rowWidgets = [];
+      for (int j = 0; j < count; j++) {
+        rowWidgets.add(GestureDetector(
+          onTap: () => _gridItemTapped(i, j, context),
+          child: GridTile(
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                        left: BorderSide(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 1,
+                        ))),
+                child: Center(
+                  child: _buildGridItem(i, j, state.board),
+                ),
+              ),
+            ),
+          ),
+        ));
+      }
+      list.add(TableRow(children: rowWidgets));
+    }
+    return list;
+  }
+
   Widget _buildGridItem(int x, int y, GameState board) {
     if (board.grid.length == 0 || board.grid[0].length == 0) {
-      debugPrint("GoBoard._buildGridItem: The board has not been loaded in the grid!");
+      debugPrint(
+          "GoBoard._buildGridItem: The board has not been loaded in the grid!");
       return Text('');
     }
     switch (board.grid[x][y]) {
@@ -81,13 +101,38 @@ class GoBoard extends StatelessWidget {
         return Text('');
         break;
       case 'W':
-        return Container(
-          color: Colors.blue,
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Container(
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black,
+                boxShadow: [
+                  BoxShadow(
+                    spreadRadius: 0,
+                    blurRadius: 1,
+                    offset: Offset(1, 1),
+                  )
+                ]),
+          ),
         );
         break;
       case 'B':
-        return Container(
-          color: Colors.yellow,
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Container(
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(width: 1, color: Colors.grey),
+                boxShadow: [
+                  BoxShadow(
+                    spreadRadius: -1,
+                    blurRadius: 1,
+                    offset: Offset(1, 1),
+                  )
+                ]),
+          ),
         );
         break;
       default:
@@ -95,8 +140,8 @@ class GoBoard extends StatelessWidget {
     }
   }
 
-  void _gridItemTapped(int x, int y) {
+  void _gridItemTapped(int x, int y, BuildContext context) {
     debugPrint("GoBoard._gridItemTapped: Tile ($x, $y) has been tapped");
-    bloc.add(TileTappedEvent(x, y));
+    BlocProvider.of<GameBoardBloc>(context).add(TileTappedEvent(x, y));
   }
 }

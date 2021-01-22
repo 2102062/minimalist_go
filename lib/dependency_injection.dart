@@ -8,5 +8,5 @@ final sl = GetIt.instance;
 
 void init() {
   sl.registerFactory(() => GameBoardBloc(IdleState(), sl()));
-  sl.registerFactory(() => Game());
+  sl.registerLazySingleton(() => Game());
 }

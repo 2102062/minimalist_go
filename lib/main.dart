@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 import 'file:///C:/Users/sccha/AndroidStudioProjects/mimialist_go/lib/features/domain/game.dart';
 
 import 'dependency_injection.dart';
@@ -24,15 +25,76 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  final GoBoard board = GoBoard(
+    bloc: sl(),
+  );
+  @override
+  State<StatefulWidget> createState() => _MyHomePageState(board);
+}
+
+class _MyHomePageState extends State {
+  final GoBoard board;
+  bool zoom = false;
+
+  _MyHomePageState(this.board);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GoBoard(bloc: sl(),),
-        ),
+      body: Stack(
+        children: [
+          Container(
+            color: Theme.of(context).primaryColor,
+            height: MediaQuery.of(context).size.height / 2,
+          ),
+          Center(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Card(
+                  child: zoom
+                      ? ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                        child: Zoom(
+                            width: MediaQuery.of(context).size.width * 2,
+                            height: MediaQuery.of(context).size.width * 2,
+                            initZoom: 1,
+                            child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: board),
+                          ),
+                      )
+                      : Padding(
+                          padding: const EdgeInsets.all(16.0), child: board),
+                ),
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: FloatingActionButton(
+                        child: Icon(zoom ? Icons.zoom_out : Icons.zoom_in),
+                        onPressed: () {
+                          setState(() {
+                            zoom = !zoom;
+                          });
+                        }),
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

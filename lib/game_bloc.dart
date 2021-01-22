@@ -23,6 +23,8 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
       game.createGrid(16);
       yield LoadedState(GameState(game.gridState));
       debugPrint("GameBoardBloc.mapEventToState: Yielded new LoadedState");
+    } else {
+      debugPrint("GameBoardBloc.mapEventToState: Unhandled event of type ${event.runtimeType} received");
     }
   }
 }
@@ -36,6 +38,9 @@ class TileTappedEvent extends GameBoardEvent {
   final int x, y;
 
   TileTappedEvent(this.x, this.y);
+
+  @override
+  List<Object> get props => super.props + [x,y];
 }
 
 class LoadBoardEvent extends GameBoardEvent {}
@@ -49,6 +54,9 @@ class LoadedState extends GameBoardState {
   final GameState board;
 
   LoadedState(this.board);
+
+  @override
+  List<Object> get props => super.props + [board];
 }
 
 class IdleState extends GameBoardState {}
