@@ -62,7 +62,7 @@ class _MyHomePageState extends State {
                             height: MediaQuery.of(context).size.width * 2,
                             initZoom: 1,
                             child: Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(32.0),
                                 child: board),
                           ),
                       )

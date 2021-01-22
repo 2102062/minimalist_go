@@ -25,17 +25,65 @@ class GoBoard extends StatelessWidget {
                 "GoBoard.build: New grid received. (size $count x ${state.board.grid[0]?.length})");
             return AspectRatio(
               aspectRatio: 1.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                      color: Colors.grey,
-                      width: 1,
-                    ),
-                    right: BorderSide(color: Colors.grey, width: 1),
-                  ),
-                ),
-                child: Table(children: _buildChildren(count, state, context)),
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return Stack(
+                    children: <Widget>[
+                      Padding(
+                        padding:
+                            EdgeInsets.all(constraints.biggest.height / 32),
+                        child: Container(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                right: BorderSide(
+                                  width: 1,
+                                  color: Colors.grey,
+                                ),
+                                top: BorderSide(
+                                  width: 1,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                            child: Center(
+                              child: Table(
+                                children: List.generate(
+                                  state.board.grid.length - 1,
+                                  (index) => TableRow(
+                                    children: List.generate(
+                                      state.board.grid.length - 1,
+                                      (index) => AspectRatio(
+                                        aspectRatio: 1,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                width: 1,
+                                                color: Colors.grey,
+                                              ),
+                                              left: BorderSide(
+                                                width: 1,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Table(
+                        children: _buildChildren(count, state, context),
+                      ),
+                    ],
+                  );
+                },
               ),
             );
           } else {
@@ -67,19 +115,7 @@ class GoBoard extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1.0,
               child: Container(
-                decoration: BoxDecoration(
-                    border: Border(
-                        left: BorderSide(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                        bottom: BorderSide(
-                          color: Colors.grey,
-                          width: 1,
-                        ))),
-                child: Center(
-                  child: _buildGridItem(i, j, state.board),
-                ),
+                child: _buildGridItem(i, j, state.board),
               ),
             ),
           ),
