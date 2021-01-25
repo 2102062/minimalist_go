@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mimialist_go/features/presentation/timer.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 import 'file:///C:/Users/sccha/AndroidStudioProjects/mimialist_go/lib/features/domain/game.dart';
 
@@ -35,6 +36,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State {
   final GoBoard board;
+  StopwatchWidget rightStopwatch = StopwatchWidget(timerBloc: sl());
+  StopwatchWidget leftStopwatch = StopwatchWidget(timerBloc: sl())..startTimer();
   bool zoom = false;
 
   _MyHomePageState(this.board);
@@ -71,6 +74,23 @@ class _MyHomePageState extends State {
                 ),
               ),
             ),
+          ),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 100.0, left: 16.0),
+                    child: Center(child: leftStopwatch),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 100.0, right: 16.0),
+                    child: Center(child: rightStopwatch),
+                  ),
+                ],
+              ),
+            ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,

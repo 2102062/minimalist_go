@@ -2,14 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mimialist_go/features/domain/game_state.dart';
+import 'package:mimialist_go/features/presentation/timer.dart';
 
 import '../domain/game.dart';
 import '../../game_bloc.dart';
 
 class GoBoard extends StatelessWidget {
   final GameBoardBloc bloc;
+  final StopwatchWidget leftStopwatch;
+  final StopwatchWidget rightStopwatch;
 
-  const GoBoard({Key key, this.bloc}) : super(key: key);
+  const GoBoard({Key key, this.bloc, this.leftStopwatch, this.rightStopwatch}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class GoBoard extends StatelessWidget {
         builder: (context, state) {
           debugPrint(
               "GoBoard.build: New state received of type <${state.runtimeType}> [Address ${state.hashCode}]");
-          if (state is LoadedState) {
+          if (state is GameBoardLoadedState) {
             int count = state.board.grid.length;
             debugPrint(
                 "GoBoard.build: New grid received. (size $count x ${state.board.grid[0]?.length})");
@@ -100,7 +103,7 @@ class GoBoard extends StatelessWidget {
   }
 
   List<TableRow> _buildChildren(
-      int count, LoadedState state, BuildContext context) {
+      int count, GameBoardLoadedState state, BuildContext context) {
     List<TableRow> list = [];
     for (int i = 0; i < count; i++) {
       int gridStateLength = state.board.grid.length;

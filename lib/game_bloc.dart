@@ -16,12 +16,12 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
     if(event is TileTappedEvent) {
       debugPrint("GameBoardBloc.mapEventToState: TileTappedEvent received.");
       game.updateTile(event.x, event.y);
-      yield LoadedState(GameState(game.gridState));
+      yield GameBoardLoadedState(GameState(game.gridState));
       debugPrint("GameBoardBloc.mapEventToState: Yielded new LoadedState");
     } else if (event is LoadBoardEvent) {
       debugPrint("GameBoardBloc.mapEventToState: LoadBoardEvent received.");
       game.createGrid(16);
-      yield LoadedState(GameState(game.gridState));
+      yield GameBoardLoadedState(GameState(game.gridState));
       debugPrint("GameBoardBloc.mapEventToState: Yielded new LoadedState");
     } else {
       debugPrint("GameBoardBloc.mapEventToState: Unhandled event of type ${event.runtimeType} received");
@@ -50,14 +50,14 @@ class GameBoardState extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadedState extends GameBoardState {
+class GameBoardLoadedState extends GameBoardState {
   final GameState board;
 
-  LoadedState(this.board);
+  GameBoardLoadedState(this.board);
 
   @override
   List<Object> get props => super.props + [board];
 }
 
-class IdleState extends GameBoardState {}
+class GameBoardIdleState extends GameBoardState {}
 
