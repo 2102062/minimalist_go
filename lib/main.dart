@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mimialist_go/features/presentation/d-pad.dart';
 import 'package:mimialist_go/features/presentation/timer.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 import 'file:///C:/Users/sccha/AndroidStudioProjects/mimialist_go/lib/features/domain/game.dart';
@@ -93,12 +94,19 @@ class _MyHomePageState extends State {
             ],
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              DPadButton(),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20.0),
